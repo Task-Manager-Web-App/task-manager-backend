@@ -1,5 +1,5 @@
 const express = require('express');
-const loginRouter = express.Router();
+const sampleLoginRouter = express.Router();
 
 require('dotenv').config();
 const { supabase } = require('../supabase-client.js');
@@ -7,7 +7,4 @@ const { supabase } = require('../supabase-client.js');
 
 
 
-
-
-
-module.exports = loginRouter;
+module.exports = sampleLoginRouter;

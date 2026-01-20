@@ -7,15 +7,35 @@ app.use(cors());
 app.use(express.json());
 
 
-// Importing sample route
-const sampleTasksRouter = require('./routes/sample-route');
-app.use('/sample-tasks', sampleTasksRouter);
-
-
 // Sample route
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
+
+
+// ======================= ROUTES =======================
+
+// Sample Routes ------------------------------------
+const sampleTasksRouter = require('./routes/sample-route');
+app.use('/sample-tasks', sampleTasksRouter);
+
+const sampleLoginRouter = require('./routes/sample-login');
+app.use('/sample-login', sampleLoginRouter);
+
+
+// Actual Routes ------------------------------------
+const loginRouter = require('./routes/login-routes');
+app.use('/login', loginRouter);
+
+const registerRouter = require('./routes/register-routes');
+app.use('/register', registerRouter);
+
+const profileRouter = require('./routes/profile-routes');
+app.use('/profile', profileRouter);
+
+const tasksRouter = require('./routes/tasks-routes');
+app.use('/tasks', tasksRouter);
+
 
 
 

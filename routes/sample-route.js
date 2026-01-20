@@ -1,9 +1,6 @@
-//Supabase integrated sample route to fetch data from sample_tasks table
-
 const express = require('express');
 const sampleTasksRouter = express.Router();
 
-//I applied this in index.js:
 require('dotenv').config();
 const { supabase } = require('../supabase-client.js');
 
@@ -28,13 +25,6 @@ sampleTasksRouter.get('/', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
-
-
-
-
-
-
 
 
 
