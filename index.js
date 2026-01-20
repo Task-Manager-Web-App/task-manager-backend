@@ -36,7 +36,8 @@ app.use('/profile', profileRouter);
 const tasksRouter = require('./routes/tasks-routes');
 app.use('/tasks', tasksRouter);
 
-
+const addTaskRouter = require('./routes/addTask-route');
+app.use('/add-task', addTaskRouter);
 
 
 
