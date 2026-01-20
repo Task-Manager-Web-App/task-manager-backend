@@ -7,6 +7,10 @@ app.use(cors());
 app.use(express.json());
 
 
+// Importing sample route
+const sampleTasksRouter = require('./routes/sample-route');
+app.use('/sample-tasks', sampleTasksRouter);
+
 
 // Sample route
 app.get('/', (req, res) => {
