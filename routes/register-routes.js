@@ -2,39 +2,34 @@ const express = require('express');
 const registerRouter = express.Router();
 
 require('dotenv').config();
-const { supabase } = require('../supabase-client.js');
+const { supabase } = require('../supabase-client');
 
 // POST /api/register
 registerRouter.post('/', async (req, res) => {
-  const { email, password, role } = req.body;
+  const { email, password } = req.body;
 
-  if (!email || !password || !role) {
-    return res.status(400).json({ message: 'All fields required' });
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
   }
 
   try {
     const { data, error } = await supabase.auth.signUp({
       email,
-      password,
-      options: {
-        data: { role }, // stored in user_metadata
-      },
+      password
     });
 
     if (error) {
       return res.status(400).json({ message: error.message });
     }
 
-    res.status(201).json({
-      message: 'User registered successfully',
+    return res.status(201).json({
+      message: 'Registration successful. Check email for confirmation.',
       user: data.user,
+      session: data.session
     });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', err });
+    return res.status(500).json({ message: 'Server error' });
   }
 });
-
-
-
 
 module.exports = registerRouter;
