@@ -4,4 +4,11 @@ import { createClient } from '@supabase/supabase-js';
 export const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
-);
+,{
+  auth: {
+    flowType: 'pkce',   // prevents tokens in URL hash
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
