@@ -6,16 +6,19 @@ const { supabase } = require('../supabase-client');
 
 // POST /api/register
 registerRouter.post('/', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
+  if (!email || !password || !role) {
+    return res.status(400).json({ message: 'Email, password, and role are required' });
   }
 
   try {
     const { data, error } = await supabase.auth.signUp({
       email,
-      password
+      password,
+      options: {
+        data: { role }
+      }
     });
 
     if (error) {
