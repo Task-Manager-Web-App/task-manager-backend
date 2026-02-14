@@ -34,6 +34,9 @@ app.use("/sample-login", sampleLoginRouter);
 const loginRouter = require("./routes/login-routes");
 app.use("/login", loginRouter);
 
+const logoutRouter = require("./routes/logout-routes");
+app.use("/logout", logoutRouter);
+
 const registerRouter = require("./routes/register-routes");
 app.use("/register", registerRouter);
 

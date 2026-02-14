@@ -1,14 +1,16 @@
-//setup supabase client
-import { createClient } from '@supabase/supabase-js';
+//setup supabase client (CommonJS)
+const { createClient } = require('@supabase/supabase-js');
 
-export const supabase = createClient(
+const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-,{
-  auth: {
-    flowType: 'pkce',   // prevents tokens in URL hash
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
+  process.env.SUPABASE_ANON_KEY,
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: false, // Backend doesn't need to persist sessions
+      detectSessionInUrl: false
+    }
   }
-});
+);
+
+module.exports = { supabase };
