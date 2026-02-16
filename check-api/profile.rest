@@ -1,0 +1,24 @@
+### Get profile (replace USER_ID)
+GET http://localhost:3000/profile/d9bb9fc7-5e58-48aa-ab43-9b0ce8933f95
+
+
+### Update profile (replace USER_ID)
+PUT http://localhost:3000/profile/d9bb9fc7-5e58-48aa-ab43-9b0ce8933f95
+Content-Type: application/json
+
+{
+  "first_name": "Ryan",
+  "last_name": "Wickramaratne",
+  "role": "User"
+}
+
+
+### Update profile as Admin (demo purpose)
+PUT http://localhost:3000/profile/c8f3e37a-a77c-4f07-9338-63bf4277d587
+Content-Type: application/json
+
+{
+  "first_name": "Michelle",
+  "last_name": "Inno",
+  "role": "Admin"
+}

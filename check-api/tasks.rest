@@ -1,0 +1,22 @@
+### Get all tasks
+GET http://localhost:3000/tasks
+
+### Delete a task (replace TASK_ID and USER_ID)
+DELETE http://localhost:3000/tasks/cbab960a-4c51-4202-a09e-a3eb08f17f76
+Content-Type: application/json
+
+{
+  "user_id": "d9bb9fc7-5e58-48aa-ab43-9b0ce8933f95",
+  "role": "admin"
+}
+
+### Update a task (replace TASK_ID and USER_ID)
+PUT http://localhost:3000/tasks/cbab960a-4c51-4202-a09e-a3eb08f17f76
+Content-Type: application/json
+
+{
+  "title": "Updated title",
+  "description": "Updated description",
+  "user_id": "d9bb9fc7-5e58-48aa-ab43-9b0ce8933f95",
+  "role": "admin"
+}

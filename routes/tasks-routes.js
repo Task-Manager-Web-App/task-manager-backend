@@ -3,10 +3,10 @@ const tasksRouter = express.Router();
 
 const { supabase } = require("../supabase-client.js");
 
-// GET /tasks
+// ======================== GET /tasks ========================
 tasksRouter.get("/", async (req, res) => {
   try {
-    const { data, error } = await supabase.from("tasks").select("*");
+    const { data, error } = await supabase.from("tasks").select("*").order("created_at", { ascending: false });
 
     if (error) {
       return res.status(400).json({ message: error.message });
@@ -18,7 +18,7 @@ tasksRouter.get("/", async (req, res) => {
   }
 });
 
-// DELETE /tasks/:id
+// ======================== DELETE /tasks/:id ========================
 tasksRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
   const { user_id, role } = req.body;
@@ -28,38 +28,51 @@ tasksRouter.delete("/:id", async (req, res) => {
   }
 
   try {
-    // Check if user owns the task or is admin
-    const { data: task } = await supabase
+
+    // 1. Here get the task's user_id from supabase to check ownership     
+    const userIDofTheTask = await supabase
       .from("tasks")
       .select("user_id")
       .eq("id", id)
-      .single();
+      .single();  
 
-    if (!task) {
+
+    if (!userIDofTheTask.data) {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Allow if user owns task OR is admin
-    if (task.user_id !== user_id && role !== "admin") {
-      return res.status(403).json({ message: "Not authorized to delete this task" });
-    }
+    // Output would be like: Task to delete: { user_id: 'some-uuid' }    
+    console.log("Task to delete:", userIDofTheTask.data);
 
-    const { data, error } = await supabase
+
+    // 2. Then check if user owns the task or is admin
+    if (userIDofTheTask.data.user_id == user_id || role === "admin") {
+
+      const { data, error } = await supabase
       .from("tasks")
       .delete()
       .eq("id", id)
       .select()
       .single();
 
-    if (error) {
-      return res.status(400).json({ message: error.message });
+      if (error) {
+        return res.status(400).json({ message: error.message });
+      }
+
+      return res.json({
+        message: "Task deleted successfully",
+        task: data,
+      });
+      
     }
 
-    return res.json({
-      message: "Task deleted successfully",
-      task: data,
-    });
-  } catch (err) {
+    else {
+      return res.status(403).json({ message: "Not authorized to delete this task" });
+    }    
+    
+  } 
+  
+  catch (err) {
     return res.status(500).json({
       message: "Server error",
       error: String(err),
@@ -68,7 +81,7 @@ tasksRouter.delete("/:id", async (req, res) => {
 });
 
 
-// PUT /tasks/:id  -> update a task
+// ======================== PUT /tasks/:id ========================
 tasksRouter.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { title, description, user_id, role } = req.body;
@@ -82,23 +95,27 @@ tasksRouter.put("/:id", async (req, res) => {
   }
 
   try {
-    // Check if user owns the task or is admin
-    const { data: task } = await supabase
+
+    // 1. Here get the task's user_id from supabase to check ownership
+    const userIDofTheTask = await supabase
       .from("tasks")
       .select("user_id")
       .eq("id", id)
       .single();
 
-    if (!task) {
+
+    if (!userIDofTheTask.data) {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    // Allow if user owns task OR is admin
-    if (task.user_id !== user_id && role !== "admin") {
-      return res.status(403).json({ message: "Not authorized to update this task" });
-    }
+    // Output would be like: Task to update: { user_id: 'some-uuid' }
+    console.log("Task to update:", userIDofTheTask.data);
 
-    const { data, error } = await supabase
+
+    // 2. Then check if user owns the task or is admin
+    if (userIDofTheTask.data.user_id == user_id || role === "admin") {
+
+      const { data, error } = await supabase
       .from("tasks")
       .update({
         title: title.trim(),
@@ -108,15 +125,24 @@ tasksRouter.put("/:id", async (req, res) => {
       .select()
       .single();
 
-    if (error) {
-      return res.status(400).json({ message: error.message });
+      if (error) {
+        return res.status(400).json({ message: error.message });
+      }
+
+      return res.json({
+        message: "Task updated successfully",
+        task: data,
+      });
+
     }
 
-    return res.json({
-      message: "Task updated successfully",
-      task: data,
-    });
-  } catch (err) {
+    else {
+      return res.status(403).json({ message: "Not authorized to update this task" });
+    }
+
+  }
+
+  catch (err) {
     return res.status(500).json({
       message: "Server error",
       error: String(err),
