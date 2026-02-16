@@ -21,8 +21,29 @@ tasksRouter.get("/", async (req, res) => {
 // DELETE /tasks/:id
 tasksRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
+  const { user_id, role } = req.body;
+
+  if (!user_id) {
+    return res.status(401).json({ message: "User not authenticated" });
+  }
 
   try {
+    // Check if user owns the task or is admin
+    const { data: task } = await supabase
+      .from("tasks")
+      .select("user_id")
+      .eq("id", id)
+      .single();
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    // Allow if user owns task OR is admin
+    if (task.user_id !== user_id && role !== "admin") {
+      return res.status(403).json({ message: "Not authorized to delete this task" });
+    }
+
     const { data, error } = await supabase
       .from("tasks")
       .delete()
@@ -50,13 +71,33 @@ tasksRouter.delete("/:id", async (req, res) => {
 // PUT /tasks/:id  -> update a task
 tasksRouter.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, description } = req.body;
+  const { title, description, user_id, role } = req.body;
+
+  if (!user_id) {
+    return res.status(401).json({ message: "User not authenticated" });
+  }
 
   if (!title || !title.trim()) {
     return res.status(400).json({ message: "Title is required" });
   }
 
   try {
+    // Check if user owns the task or is admin
+    const { data: task } = await supabase
+      .from("tasks")
+      .select("user_id")
+      .eq("id", id)
+      .single();
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    // Allow if user owns task OR is admin
+    if (task.user_id !== user_id && role !== "admin") {
+      return res.status(403).json({ message: "Not authorized to update this task" });
+    }
+
     const { data, error } = await supabase
       .from("tasks")
       .update({
