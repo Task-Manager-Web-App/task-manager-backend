@@ -81,8 +81,11 @@ profileRouter.put("/:userId", async (req, res) => {
 
     if (currentUserRole.error) return res.status(400).json({ message: currentUserRole.error.message });
 
-    // Check if user is trying to change their role and current role is "User"
-    if (role && currentUserRole.data?.role === "User") {
+    // Check if user is trying to CHANGE their role (not just sending the same role)
+    const currentRole = currentUserRole.data?.role || "User";
+    const isRoleChanging = role && role.toLowerCase() !== currentRole.toLowerCase();
+    
+    if (isRoleChanging && currentRole === "User") {
       return res.status(403).json({ message: "Users with 'User' role cannot change their role" });
     }
 
